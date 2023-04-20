@@ -67,10 +67,20 @@ class ProductService
     }
 
 
-    public function fetchProductsById($productId)
+    public function fetchProductTypes()
     {
         try {
-            return json_encode($this->productRepository->fetchProductsById($productId));
+            return json_encode($this->productRepository->fetchProductTypes());
+        } catch (Exception $ex) {
+            return json_encode(array());
+        }
+    }
+
+
+    public function fetchProductsBySku($sku)
+    {
+        try {
+            return json_encode($this->productRepository->fetchProductsBySku($sku));
         } catch (Exception $ex) {
             return json_encode(array());
         }
