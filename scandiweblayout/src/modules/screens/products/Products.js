@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, FlatList, Text } from "react-native";
+import { View, Text } from "react-native";
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import Header from "../../components/Header";
@@ -54,7 +54,7 @@ function Products() {
             action1Icon={<AddIcon />}
             action1Text={'Add Product'}
             action1={() => {
-                navigate("./addproduct");
+                navigate("./add-product");
             }}
             action2Id={'delete-product-btn'}
             action2Icon={<DeleteIcon />}
