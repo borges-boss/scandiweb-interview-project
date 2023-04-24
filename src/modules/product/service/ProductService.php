@@ -45,8 +45,27 @@ class ProductService
                 } else
                     $response = json_encode(array('success' => false, 'message' => 'Product could not be registred'));
 
-            } else
-                $response = json_encode(array('success' => false, 'message' => 'One or more fields are missing...'));
+            } else {
+                if($sku == null) {
+                    $response = json_encode(array('success' => false, 'message' => 'The sku field is missing...'));
+                }
+
+                if($name == null) {
+                    $response = json_encode(array('success' => false, 'message' => 'The name field is missing...'));
+                }
+
+                if($price == null) {
+                    $response = json_encode(array('success' => false, 'message' => 'The price field is missing...'));
+                }
+
+                if($productSpecificValue == null) {
+                    $response = json_encode(array('success' => false, 'message' => 'The productSpecificValue field is missing...'));
+                }
+
+                if($productType == null) {
+                    $response = json_encode(array('success' => false, 'message' => 'The productType field is missing...'));
+                }
+            }
 
 
             return $response;

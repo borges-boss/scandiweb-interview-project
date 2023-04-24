@@ -13,7 +13,12 @@ class ProductRepository
     {
         $conn = $this->database->getConnection();
         try {
-            $stmt = $conn->prepare("DELETE products WHERE product_id = ? ");
+            $stmtSpecific = $conn->prepare("DELETE FROM product_specific WHERE product_id = ? ");
+            $stmtSpecific->bind_param("i", $productId);
+            $stmtSpecific->execute();
+            $stmtSpecific->close();
+
+            $stmt = $conn->prepare("DELETE FROM products WHERE product_id = ? ");
             $stmt->bind_param("i", $productId);
             $stmt->execute();
             $stmt->close();
@@ -35,13 +40,14 @@ class ProductRepository
             return $conn->insert_id;
 
         } catch (Exception $ex) {
-            return 0;
+            echo $ex->getMessage();
+            return null;
         } finally {
             $conn->close();
         }
     }
 
-    private function insertProductSpecific($productId, $value)
+    public function insertProductSpecific($productId, $value)
     {
         $conn = $this->database->getConnection();
         try {
@@ -72,7 +78,11 @@ class ProductRepository
                     $stmt->bind_param("i", $row["product_id"]);
                     $stmt->execute();
                     $productSpecifics = $stmt->get_result();
-                    $data = $productSpecifics->fetch_assoc();
+                    $data = [];
+                    while($rowSpecific = $productSpecifics->fetch_assoc()) {
+                        array_push($data,$rowSpecific);
+                    }
+
                     array_push($response, array('productId' => $row["product_id"], 'sku' => $row["sku"], 'name' => $row["name"], 'price' => $row["price"], 'productSpecific' => $data, 'productTypeId' => $row["product_type_id"], 'productTypeName' => $row["product_type_name"]));
                     $stmt->close();
                 }
