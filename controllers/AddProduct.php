@@ -5,13 +5,37 @@ include('../src/modules/product/object/ProductType.php');
 include('../src/modules/product/object/ProductSpecific.php');
 include('../src/modules/product/repository/ProductRepository.php');
 include('../src/modules/product/service/ProductService.php');
+$response = '';
+$data = json_decode(file_get_contents('php://input'));
+$entityBody = get_object_vars($data);
+extract($entityBody);
 
-
-if (!empty($_POST['sku']) && !empty($_POST['name']) && !empty($_POST['price']) && !empty($_POST['productType']) && !empty($_POST['productSpecific'])) {
+if ($entityBody['sku'] && $entityBody['name'] && $entityBody['price'] && $entityBody['productType'] && $entityBody['productSpecificValues']) {
     $productService = new ProductService();
-    $response = $productService->insertProduct($_POST['sku'], $_POST['name'], $_POST['price'], $_POST['productSpecific'], $_POST['productType']);
+    $response = $productService->insertProduct($entityBody['sku'], $entityBody['name'], $entityBody['price'], $entityBody['productSpecificValues'], $entityBody['productType']);
     echo $response;
-} else
-    echo json_encode(array('success' => false, 'message' => 'One or more fields are missing...'));
+} else {
+    if ($entityBody['sku']) {
+        $response = json_encode(array('success' => false, 'message' => 'The sku field is missing...'));
+    }
+
+    if ($entityBody['name']) {
+        $response = json_encode(array('success' => false, 'message' => 'The name field is missing...'));
+    }
+
+    if ($entityBody['price']) {
+        $response = json_encode(array('success' => false, 'message' => 'The price field is missing...'));
+    }
+
+    if ($entityBody['productSpecificValues']) {
+        $response = json_encode(array('success' => false, 'message' => 'The productSpecificValue field is missing...'));
+    }
+
+    if ($entityBody['productType']) {
+        $response = json_encode(array('success' => false, 'message' => 'The productType field is missing...'));
+    }
+
+    echo json_encode($response);
+}
 
 ?>
