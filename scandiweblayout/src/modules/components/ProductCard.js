@@ -18,7 +18,7 @@ const ProductCard = (props) => {
             <Pressable onPress={() => {
                 setIsChecked(!isChecked);
                 if (props.callback)
-                    props.callback(props.sku);
+                    props.callback(props.productId);
             }}>
                 <Card variant="outlined">
                     <React.Fragment>

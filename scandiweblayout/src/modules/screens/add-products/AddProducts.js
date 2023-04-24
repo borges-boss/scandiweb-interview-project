@@ -5,19 +5,30 @@ import { useNavigate } from "react-router-dom";
 import Stack from '@mui/material/Stack';
 
 function insertNewProduct(sku, name, price, productSpecificValues, productType) {
+
+    let productKeys = Object.keys(productSpecificValues);
+    let productString = '';
+    productKeys.forEach((key) => {
+        productString = productString + productSpecificValues[key] + '#';
+    });
+
+    productString = productString.substring(0, productString.length - 1);
+    console.log('productString: ' + productString);
     return fetch('./controllers/AddProduct.php', {
         method: "POST",
         headers: {
             "Access-Control-Allow-Origin": "*",
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ sku: sku, name: name, price: price, productSpecificValues: productSpecificValues, productType: productType })
+        body: JSON.stringify({ sku: sku, name: name, price: price, productSpecificValues: productString, productType: productType })
     })
         .then((res) => res.json())
         .then(function (json) {
-            console.log(json);
+            productString = '';
+            return json;
         })
         .catch((error) => {
+            productString = '';
             return undefined;
         });
 }
@@ -34,6 +45,19 @@ function processProductTypes(productTypes) {
     }
 
     return response;
+}
+
+
+function getProductTypeLabel(productTypesArray, productType) {
+    let productTypeLabel = productTypesArray.filter((value) => { //e.g: Book
+        return value.productTypeId == productType;
+    });
+
+    if (Array.isArray(productTypeLabel) && productTypeLabel.length > 0) {
+        return productTypeLabel[0].productTypeName;
+    }
+
+    return null;
 }
 
 async function validateFields(sku, name, price, productSpecificValues, productType, productTypesArray) {
@@ -81,9 +105,7 @@ async function validateFields(sku, name, price, productSpecificValues, productTy
     }
 
 
-    let productTypeLabel = productTypesArray.filter((value) => { //e.g: Book
-        return value.productTypeId == productType;
-    }).productTypeName;
+    let productTypeLabel = getProductTypeLabel(productTypesArray, productType);
 
     if (productTypeLabel == 'Book') {
         if (!productSpecificValues.weight) {
@@ -127,8 +149,10 @@ function AddProducts() {
             .then((res) => res.json())
             .then(function (json) {
                 console.log(json);
-                if (Array.isArray(json))
+                if (Array.isArray(json) && json.length > 0) {
                     setProductTypes(json);
+                    setProductType(json[0].productTypeId);
+                }
             })
             .catch((error) => {
                 return undefined;
@@ -145,6 +169,7 @@ function AddProducts() {
 
                 if (response.success === true) {
                     let insertResponse = await insertNewProduct(sku, name, price, productSpecificValues, productType);
+                    console.log(insertResponse);
                     if (insertResponse && insertResponse.success == true) {
                         navigate('/');
                     }
@@ -224,6 +249,7 @@ function AddProducts() {
                 <Stack style={{ marginTop: 16 }}>
                     <Text style={{ fontWeight: '600' }}>Type Switcher</Text>
                     <Picker
+                        placeholder={'Type switcher'}
                         id={'productType'}
                         style={{
                             marginTop: 16,
@@ -239,6 +265,8 @@ function AddProducts() {
                             borderWidth: 1
                         }}
                         onValueChange={(value, index) => {
+                            console.log(value);
+                            console.log(getProductTypeLabel(productTypes, productType));
                             setProductType(value);
                         }}
                     >
@@ -249,11 +277,11 @@ function AddProducts() {
 
                 <View>
                     {
-                        productType == 'Book' ?
+                        getProductTypeLabel(productTypes, productType) == 'Book' ?
                             <Stack id={'Book'} style={{ marginTop: 16 }}>
                                 <Text style={{ fontWeight: '600' }}>Weight</Text>
                                 <TextInput onChangeText={(text) => {
-                                    productSpecificValues.weight = text;
+                                    productSpecificValues.weight = 'Weight: ' + text;
                                     setProductSpecific(productSpecificValues);
                                 }} placeholder="Please provide the weight..." id="weight" style={{
                                     marginTop: 16,
@@ -273,11 +301,11 @@ function AddProducts() {
 
 
                     {
-                        productType == 'Furniture' ?
+                        getProductTypeLabel(productTypes, productType) == 'Furniture' ?
                             <Stack id={'Furniture'} style={{ marginTop: 16 }}>
                                 <Text style={{ fontWeight: '600' }}>Height</Text>
                                 <TextInput onChangeText={(text) => {
-                                    productSpecificValues.height = text;
+                                    productSpecificValues.height = 'Height: ' + text;
                                     setProductSpecific(productSpecificValues);
                                 }}
                                     placeholder="Please provide the height..."
@@ -295,7 +323,7 @@ function AddProducts() {
 
                                 <Text style={{ fontWeight: '600', marginTop: 16 }}>Width</Text>
                                 <TextInput onChangeText={(text) => {
-                                    productSpecificValues.width = text;
+                                    productSpecificValues.width = 'Width: ' + text;
                                     setProductSpecific(productSpecificValues);
                                 }} placeholder="Please provide the width..." id="width" style={{
                                     marginTop: 16,
@@ -311,7 +339,7 @@ function AddProducts() {
 
                                 <Text style={{ fontWeight: '600', marginTop: 16 }}>Length</Text>
                                 <TextInput onChangeText={(text) => {
-                                    productSpecificValues.length = text;
+                                    productSpecificValues.length = 'Length: ' + text;
                                     setProductSpecific(productSpecificValues);
                                 }} placeholder="Please provide the length..." id="length" style={{
                                     marginTop: 16,
@@ -331,11 +359,11 @@ function AddProducts() {
 
 
                     {
-                        productType == 'DVD' ?
+                        getProductTypeLabel(productTypes, productType) == 'DVD' ?
                             <Stack id={'DVD'} style={{ marginTop: 16 }}>
                                 <Text style={{ fontWeight: '600', marginTop: 16 }}>Size(MB)</Text>
                                 <TextInput onChangeText={(text) => {
-                                    productSpecificValues.size = text;
+                                    productSpecificValues.size = 'Size: ' + text;
                                     setProductSpecific(productSpecificValues);
                                 }} placeholder="Please provide the size in MB..." id="size" style={{
                                     marginTop: 16,

@@ -28,19 +28,19 @@ const Header = (props) => {
                 {!isMobile ?
                     <Stack direction="row" spacing={2}>
                         <ThemeProvider theme={theme}>
-                            <Button id={props.action1Id} color="neutral" startIcon={props.action1Icon} variant='contained' onClick={props.action1}>{props.action1Text}</Button>
+                            <Button id={props.action1Id} disabled={props.disabled!==undefined ? props.disabled: false} color="neutral" startIcon={props.action1Icon} variant='contained' onClick={props.action1}>{props.action1Text}</Button>
                         </ThemeProvider>
                         <ThemeProvider theme={theme}>
-                            <Button id={props.action2Id} color="error" startIcon={props.action2Icon} variant='outlined' onClick={props.action2}>{props.action2Text}</Button>
+                            <Button id={props.action2Id} disabled={props.disabled2!==undefined ? props.disabled2: false} color="error" startIcon={props.action2Icon} variant='outlined' onClick={props.action2}>{props.action2Text}</Button>
                         </ThemeProvider>
                     </Stack>
                     :
                     <Stack direction="row" spacing={1}>
                         <ThemeProvider theme={theme}>
-                            <IconButton id={props.action1Id} color="neutral" onClick={props.action1}>{props.action1Icon}</IconButton>
+                            <IconButton id={props.action1Id} disabled={props.disabled!==undefined ? props.disabled: false} color="neutral" onClick={props.action1}>{props.action1Icon}</IconButton>
                         </ThemeProvider>
                         <ThemeProvider theme={theme}>
-                            <IconButton id={props.action2Id} color="error" onClick={props.action2}>{props.action2Icon}</IconButton>
+                            <IconButton id={props.action2Id} disabled={props.disabled2!==undefined ? props.disabled2: false} color="error" onClick={props.action2}>{props.action2Icon}</IconButton>
                         </ThemeProvider>
                     </Stack>
                 }
